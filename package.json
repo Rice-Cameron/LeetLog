@@ -10,13 +10,14 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.23.0",
+    "@stackframe/stack": "^2.8.12",
     "date-fns": "^4.1.0",
     "next": "15.3.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-select": "^5.10.1",
-    "svix": "^1.67.0"
+    "svix": "^1.67.0",
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

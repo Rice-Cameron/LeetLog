@@ -1,11 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useUser, SignInButton, UserButton } from "@clerk/nextjs";
+import { useUser, SignIn, UserButton } from "@stackframe/stack";
 import { useEffect, useState } from "react";
 
 export default function Page() {
   const router = useRouter();
-  const { isSignedIn, user } = useUser();
+  const user = useUser();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -41,33 +41,29 @@ export default function Page() {
                 </h2>
               </div>
               <div className="flex items-center gap-6">
-                {isSignedIn ? (
+                {user ? (
                   <>
                     <span className="text-gray-700 font-medium hidden sm:block">
                       Welcome back,{" "}
                       <span className="text-gradient">
-                        {user?.firstName || "Developer"}
+                        {user.displayName || "Developer"}
                       </span>
                       !
                     </span>
-                    <UserButton
-                      afterSignOutUrl="/"
-                      appearance={{
-                        elements: {
-                          avatarBox:
-                            "w-10 h-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow",
-                        },
-                      }}
-                    />
+                    <UserButton />
                   </>
                 ) : (
-                  <SignInButton
-                    mode="modal"
-                    forceRedirectUrl="/problems"
-                    signUpForceRedirectUrl="/problems"
-                  >
-                    <button className="btn-primary">Sign In</button>
-                  </SignInButton>
+                  <SignIn
+                    fullPage={true}
+                    automaticRedirect={true}
+                    extraInfo={
+                      <p>
+                        When signing in, you agree to our{" "}
+                        <a href="/terms">Terms</a>
+                      </p>
+                    }
+                    firstTab="password"
+                  />
                 )}
               </div>
             </div>
@@ -186,7 +182,7 @@ export default function Page() {
             className={`${mounted ? "animate-fade-in" : "opacity-0"}`}
             style={{ animationDelay: "0.9s" }}
           >
-            {isSignedIn ? (
+            {user ? (
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <button
                   onClick={() => router.push("/problems")}
@@ -222,30 +218,31 @@ export default function Page() {
                   Ready to level up your coding skills?
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <SignInButton
-                    mode="redirect"
-                    forceRedirectUrl="/problems"
-                    signUpForceRedirectUrl="/problems"
-                  >
-                    <button className="btn-primary text-lg px-10 py-4 group">
-                      <span className="flex items-center gap-2">
-                        Get Started
-                        <svg
-                          className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 7l5 5m0 0l-5 5m5-5H6"
-                          />
-                        </svg>
-                      </span>
-                    </button>
-                  </SignInButton>
+                  <SignIn
+                    fullPage={true}
+                    automaticRedirect={true}
+                    extraInfo={
+                      <button className="btn-primary text-lg px-10 py-4 group">
+                        <span className="flex items-center gap-2">
+                          Get Started
+                          <svg
+                            className="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13 7l5 5m0 0l-5 5m5-5H6"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                    }
+                    firstTab="password"
+                  />
                   <button
                     onClick={() => router.push("/sign-up")}
                     className="btn-secondary text-lg px-10 py-4"

@@ -1,39 +1,54 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { stackServerApp } from "@/stack";
+import { MAINTENANCE_MODE } from "@/config";
 
-const isProtectedRoute = createRouteMatcher([
-  "/problems(.*)",
-  "/new(.*)",
-  "/api/problems(.*)",
-]);
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE === "1";
-
-export default clerkMiddleware(async (auth, req) => {
   // Maintenance mode logic
-  const { pathname } = req.nextUrl;
   if (
     MAINTENANCE_MODE &&
     !pathname.startsWith("/_next") &&
     !pathname.startsWith("/static") &&
     pathname !== "/maintenance.html" &&
-    !pathname.match(
-      /\.(?:css|js|json|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)$/
-    )
+    !/\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)$/.test(pathname)
   ) {
-    const url = req.nextUrl.clone();
+    const url = request.nextUrl.clone();
     url.pathname = "/maintenance.html";
     return NextResponse.rewrite(url);
   }
 
-  if (isProtectedRoute(req)) await auth.protect();
-});
+  // Protected routes
+  const protectedRoutes = [
+    "/problems",
+    "/settings",
+    "/profile",
+    "/new",
+    "/api/problems",
+  ];
 
+  if (protectedRoutes.some(route => pathname.startsWith(route))) {
+    try {
+      const user = await stackServerApp.getUser();
+      if (!user) {
+        const signInUrl = new URL("/sign-in", request.url);
+        return NextResponse.redirect(signInUrl);
+      }
+    } catch (error) {
+      console.error('Error checking user in middleware:', error);
+      const signInUrl = new URL("/sign-in", request.url);
+      return NextResponse.redirect(signInUrl);
+    }
+  }
+
+  return NextResponse.next();
+}
+
+// Stop Middleware running on static files
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
+    "/((?!_next|[^?]*\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
 };

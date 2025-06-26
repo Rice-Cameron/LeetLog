@@ -2,21 +2,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Problem } from "@/types/problem";
-import { useUser, UserButton } from "@clerk/nextjs";
-import { SignInButton } from "@clerk/nextjs";
+import { useAuth } from "@stackframe/stack";
 
 export default function ProblemsPage() {
   const [problems, setProblems] = useState<Problem[]>([]);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isSignedIn, isLoaded } = useUser();
+  const { user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
+    if (!authLoading && user) {
       fetchProblems();
     }
-  }, [isLoaded, isSignedIn]);
+  }, [authLoading, user]);
 
   const fetchProblems = async () => {
     try {
@@ -34,8 +33,8 @@ export default function ProblemsPage() {
     }
   };
 
-  // Show loading while Clerk is loading
-  if (!isLoaded || isLoading) {
+  // Show loading while auth is loading
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -44,7 +43,7 @@ export default function ProblemsPage() {
   }
 
   // Redirect to sign in if not authenticated
-  if (!isSignedIn) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
@@ -54,12 +53,18 @@ export default function ProblemsPage() {
           <p className="text-gray-600 mb-6">
             Please sign in to view your problems.
           </p>
-          <SignInButton mode="redirect">
-            <button className="btn-primary w-full justify-center">
-              Sign In
-            </button>
-          </SignInButton>
+          <a href="/sign-in" className="btn-primary w-full justify-center">
+            Sign In
+          </a>
         </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
   }

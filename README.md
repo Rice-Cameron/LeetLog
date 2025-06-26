@@ -12,6 +12,8 @@ A modern web application for tracking and organizing your LeetCode problem solvi
 - Track problem categories and trigger keywords
 - Modern, responsive UI
 - Built with TypeScript for type safety
+- Secure authentication powered by Stack Auth
+- User-specific problem tracking and isolation
 
 ## Tech Stack
 
@@ -21,6 +23,7 @@ A modern web application for tracking and organizing your LeetCode problem solvi
 - Tailwind CSS 4
 - Prisma ORM 6.10.1
 - Neon (PostgreSQL)
+- Stack Auth
 
 _Note: Initially, SQLite was used for local development, but was later replaced with Neon (PostgreSQL) once deployed._
 
@@ -48,6 +51,14 @@ Then, edit `.env` to add your own secrets and configuration values.
    ```bash
    cp .env.copy .env
    ```
+
+   **Stack Auth Configuration:**
+
+   1. Create a Stack Auth application at [https://stack-auth.com](https://stack-auth.com)
+   2. Add your Stack Auth credentials to the `.env` file:
+      - `STACK_AUTH_CLIENT_ID`
+      - `STACK_AUTH_CLIENT_SECRET`
+      - `STACK_AUTH_REDIRECT_URL`
 
 3. Run the development server:
 
