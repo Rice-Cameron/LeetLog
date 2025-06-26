@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useUser, SignIn, UserButton } from "@stackframe/stack";
+import { useUser, UserButton } from "@stackframe/stack";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -53,17 +53,12 @@ export default function Page() {
                     <UserButton />
                   </>
                 ) : (
-                  <SignIn
-                    fullPage={true}
-                    automaticRedirect={true}
-                    extraInfo={
-                      <p>
-                        When signing in, you agree to our{" "}
-                        <a href="/terms">Terms</a>
-                      </p>
-                    }
-                    firstTab="password"
-                  />
+                  <button
+                    onClick={() => router.push("/sign-in")}
+                    className="btn-primary px-6 py-3 text-base"
+                  >
+                    Sign In
+                  </button>
                 )}
               </div>
             </div>
@@ -218,31 +213,12 @@ export default function Page() {
                   Ready to level up your coding skills?
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <SignIn
-                    fullPage={true}
-                    automaticRedirect={true}
-                    extraInfo={
-                      <button className="btn-primary text-lg px-10 py-4 group">
-                        <span className="flex items-center gap-2">
-                          Get Started
-                          <svg
-                            className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13 7l5 5m0 0l-5 5m5-5H6"
-                            />
-                          </svg>
-                        </span>
-                      </button>
-                    }
-                    firstTab="password"
-                  />
+                  <button
+                    onClick={() => router.push("/sign-in")}
+                    className="btn-primary text-lg px-10 py-4 group"
+                  >
+                    Sign In
+                  </button>
                   <button
                     onClick={() => router.push("/sign-up")}
                     className="btn-secondary text-lg px-10 py-4"
