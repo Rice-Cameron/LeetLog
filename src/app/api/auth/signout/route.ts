@@ -1,12 +1,11 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { NextResponse } from "next/server";
 
 export async function POST() {
-  try {
-    await auth.signOut();
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Sign out error:', error);
-    return NextResponse.json({ error: 'Failed to sign out' }, { status: 500 });
-  }
+  return NextResponse.json(
+    {
+      error:
+        "Sign out is handled on the frontend. Use the <SignOut /> component.",
+    },
+    { status: 400 }
+  );
 }

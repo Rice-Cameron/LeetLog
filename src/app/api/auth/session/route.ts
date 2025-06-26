@@ -1,12 +1,15 @@
-import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import { stackServerApp } from "@/stack";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const session = await auth.getSession();
-    return NextResponse.json(session);
+    const user = await stackServerApp.getUser({ tokenStore: request });
+    return NextResponse.json(user);
   } catch (error) {
-    console.error('Session error:', error);
-    return NextResponse.json({ error: 'Failed to get session' }, { status: 500 });
+    console.error("Session error:", error);
+    return NextResponse.json(
+      { error: "Failed to get session" },
+      { status: 500 }
+    );
   }
 }

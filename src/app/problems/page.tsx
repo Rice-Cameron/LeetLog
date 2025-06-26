@@ -2,17 +2,18 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Problem } from "@/types/problem";
-import { useAuth } from "@stackframe/stack";
+import { UserButton, useUser } from "@stackframe/stack";
 
 export default function ProblemsPage() {
   const [problems, setProblems] = useState<Problem[]>([]);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, isLoading: authLoading } = useAuth();
+  const user = useUser();
+  const authLoading = false; // We don't have isLoading from useUser
 
   useEffect(() => {
-    if (!authLoading && user) {
+    if (user) {
       fetchProblems();
     }
   }, [authLoading, user]);
@@ -102,15 +103,7 @@ export default function ProblemsPage() {
                   LeetLog
                 </h2>
               </div>
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    avatarBox:
-                      "w-10 h-10 rounded-xl shadow-lg hover:shadow-xl transition-shadow",
-                  },
-                }}
-              />
+              <UserButton />
             </div>
           </div>
         </div>

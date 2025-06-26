@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "../../../../../lib/prisma";
 import { CreateProblem } from "@/types/problem";
-import { auth } from "@clerk/nextjs/server";
+import { stackServerApp } from "@/stack";
 
 export async function GET(
   request: NextRequest,
@@ -9,7 +9,8 @@ export async function GET(
 ) {
   const resolvedParams = await params;
   try {
-    const { userId } = await auth();
+    const user = await stackServerApp.getUser({ tokenStore: request });
+    const userId = user?.id;
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -53,7 +54,8 @@ export async function PUT(
 ) {
   const resolvedParams = await params;
   try {
-    const { userId } = await auth();
+    const user = await stackServerApp.getUser({ tokenStore: request });
+    const userId = user?.id;
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -114,7 +116,8 @@ export async function DELETE(
 ) {
   const resolvedParams = await params;
   try {
-    const { userId } = await auth();
+    const user = await stackServerApp.getUser({ tokenStore: request });
+    const userId = user?.id;
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
