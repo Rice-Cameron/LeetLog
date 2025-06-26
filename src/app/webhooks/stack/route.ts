@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
@@ -57,17 +58,52 @@ export async function POST(request: Request) {
   }
 }
 
+// Assumes userData has at least id and email fields from Stack Auth
 async function handleUserCreated(userData: any) {
-  // Handle user creation
-  console.log("User created:", userData);
+  try {
+    await prisma.user.upsert({
+      where: { id: userData.id },
+      update: {
+        email: userData.email,
+        firstName: userData.firstName ?? null,
+        lastName: userData.lastName ?? null,
+      },
+      create: {
+        id: userData.id,
+        email: userData.email,
+        firstName: userData.firstName ?? null,
+        lastName: userData.lastName ?? null,
+      },
+    });
+    console.log("User created or updated:", userData);
+  } catch (error) {
+    console.error("Error syncing user (created):", error, userData);
+  }
 }
 
 async function handleUserUpdated(userData: any) {
-  // Handle user updates
-  console.log("User updated:", userData);
+  try {
+    await prisma.user.update({
+      where: { id: userData.id },
+      data: {
+        email: userData.email,
+        firstName: userData.firstName ?? null,
+        lastName: userData.lastName ?? null,
+      },
+    });
+    console.log("User updated:", userData);
+  } catch (error) {
+    console.error("Error syncing user (updated):", error, userData);
+  }
 }
 
 async function handleUserDeleted(userData: any) {
-  // Handle user deletion
-  console.log("User deleted:", userData);
+  try {
+    await prisma.user.delete({
+      where: { id: userData.id },
+    });
+    console.log("User deleted:", userData);
+  } catch (error) {
+    console.error("Error syncing user (deleted):", error, userData);
+  }
 }
