@@ -58,6 +58,8 @@ export async function POST(request: Request) {
   }
 }
 
+// TODO: All following fail with prisma.x.y, due to database setup
+
 // Assumes userData has at least id and email fields from Stack Auth
 async function handleUserCreated(userData: any) {
   try {
